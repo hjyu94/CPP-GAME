@@ -21,5 +21,8 @@
     <ClCompile Include="02 난수.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="구조체와 문자열.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
