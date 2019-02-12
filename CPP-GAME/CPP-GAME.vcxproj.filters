@@ -27,5 +27,8 @@
     <ClCompile Include="구조체 - 도서 관리 프로그램.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="23. TextRPG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
