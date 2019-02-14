@@ -30,5 +30,20 @@
     <ClCompile Include="23. TextRPG.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="31 포인터 배열.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="31 포인터 구조체, void 포인터.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="32 이중 포인터.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="소스.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="38 미로 게임.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
