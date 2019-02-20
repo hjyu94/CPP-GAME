@@ -87,7 +87,7 @@ void Output(char Maze[20][20], PPLAYER pPlayer)
 			else if (Maze[i][j] == '2') cout << "★"; // 시작점
 			else if (Maze[i][j] == '3') cout << "◎"; // 도착점
 			else if (Maze[i][j] == '4') cout << "♨"; // 폭탄
-			else if (Maze[i][j] == '5') cout << "↗"; // 파워 아이템
+			else if (Maze[i][j] == '5') cout << "㈜"; // 파워 아이템
 			else if (Maze[i][j] == '6') cout << "※"; // 벽 밀기
 			else if (Maze[i][j] == '7') cout << "㉾"; // 투명
 		}
@@ -272,13 +272,6 @@ void MovePlayer(char Maze[20][20], PPLAYER pPlayer, char cInput)
 
 void CreateBomb(char Maze[20][20], const PPLAYER pPlayer, PPOINT pBombArr, int* pBombCount)
 {
-	for (int i = 0; i < *pBombCount; ++i) // 같은 자리에 계속 폭탄을 설치하는 등의 경우를 막자
-	{
-		if ((pPlayer->tPos.x == pBombArr[i].x) &&
-			(pPlayer->tPos.y == pBombArr[i].y))
-			return;
-	}
-	
 	if (*pBombCount >= 5) // 폭탄은 5개 이상 설치할 수 없다.
 	{
 		cout << "폭탄을 모두 설치했습니다" << endl;
@@ -286,9 +279,23 @@ void CreateBomb(char Maze[20][20], const PPLAYER pPlayer, PPOINT pBombArr, int* 
 		return;
 	}
 
+	// 벽이 있는 위치에는 폭탄을 설치할 수 없다.
+	else if (Maze[pPlayer->tPos.y][pPlayer->tPos.x] == '0')
+	{	
+		cout << "이곳에는 폭탄을 설치할 수 없습니다" << endl;
+		return;
+	}
+
+	// 같은 자리에 계속 폭탄을 설치할 수 없다.
+	for (int i = 0; i < *pBombCount; ++i) 
+	{
+		if ((pPlayer->tPos.x == pBombArr[i].x) &&
+			(pPlayer->tPos.y == pBombArr[i].y))
+			return;
+	}
+	
 	pBombArr[(*pBombCount)++] = pPlayer->tPos;
 	
-
 	Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '4';
 }
 
@@ -315,100 +322,70 @@ void Fire(char Maze[20][20], PPLAYER pPlayer, PPOINT pBombArr, int* pBombCount)
 {
 	for (int i = 0; i < *pBombCount; ++i)
 	{
-		// 아래처럼 안 해도 됨!!
-		//if (pBombArr[i].x==0 || pBombArr[i].x==18 || pBombArr[i].y == 0 || pBombArr[i].y == 19) // 가장자리에 있는 경우
-		//{
-		//	if (pBombArr[i].x == 0) // 폭탄 설치 위치가 제일 왼쪽인 경우, 오른쪽이 벽이라면 터트린다.
-		//	{
-		//		if (Maze[pBombArr[i].y][pBombArr[i].x + 1] == '0')
-		//			Maze[pBombArr[i].y][pBombArr[i].x + 1] = '1';
-		//	}
-		//	else if (pBombArr[i].x == 18)
-		//	{
-		//		if (Maze[pBombArr[i].y][pBombArr[i].x - 1] == '0')
-		//			Maze[pBombArr[i].y][pBombArr[i].x - 1] = '1';
-		//	}
-
-		//	if (pBombArr[i].y == 0) // 폭탄 설치 위치가 제일 위쪽인 경우, 아래쪽이 벽이라면 터트린다.
-		//	{
-		//		if (Maze[pBombArr[i].y + 1][pBombArr[i].x] == '0')
-		//			Maze[pBombArr[i].y + 1][pBombArr[i].x] = '1';
-		//	}
-		//	else if (pBombArr[i].y == 19)
-		//	{
-		//		if (Maze[pBombArr[i].y - 1][pBombArr[i].x] == '0')
-		//			Maze[pBombArr[i].y - 1][pBombArr[i].x] = '1';
-		//	}
-		//}
-		//else // 가장자리가 아닌 경우
-		//{
-		//	if (Maze[pBombArr[i].y][pBombArr[i].x + 1] == '0')
-		//		Maze[pBombArr[i].y][pBombArr[i].x + 1] = '1';
-		//	if (Maze[pBombArr[i].y][pBombArr[i].x - 1] == '0')
-		//		Maze[pBombArr[i].y][pBombArr[i].x - 1] = '1';
-		//	if (Maze[pBombArr[i].y + 1][pBombArr[i].x] == '0')
-		//		Maze[pBombArr[i].y + 1][pBombArr[i].x] = '1';
-		//	if (Maze[pBombArr[i].y - 1][pBombArr[i].x] == '0')
-		//		Maze[pBombArr[i].y - 1][pBombArr[i].x] = '1';
-		//}
-
-		if (pBombArr[i].x <= 17) // 오른쪽이 벽이라면 터뜨린다.
+		for (int j = 1; j <= pPlayer->iBombPower; ++j)
 		{
-			if (Maze[pBombArr[i].y][pBombArr[i].x + 1] == '0')
-				Maze[pBombArr[i].y][pBombArr[i].x + 1] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
-
-			// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
-			if (pPlayer->tPos.x == pBombArr[i].x+1 && pPlayer->tPos.y == pBombArr[i].y)
+			if (pBombArr[i].y >= 1) // 위쪽이 벽이라면 터뜨린다.
 			{
-				pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				if (Maze[pBombArr[i].y - j][pBombArr[i].x] == '0')
+					Maze[pBombArr[i].y - j][pBombArr[i].x] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
+
+				// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
+				if (pPlayer->tPos.x == pBombArr[i].x && pPlayer->tPos.y == pBombArr[i].y - j)
+				{
+					pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				}
 			}
-		}
-		
-		if (pBombArr[i].x >= 1) // 왼쪽이 벽이라면 터뜨린다.
-		{
-			if (Maze[pBombArr[i].y][pBombArr[i].x - 1] == '0')
-				Maze[pBombArr[i].y][pBombArr[i].x - 1] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
-
-			// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
-			if (pPlayer->tPos.x == pBombArr[i].x - 1 && pPlayer->tPos.y == pBombArr[i].y)
+			
+			if (pBombArr[i].y <= 18) // 아래쪽이 벽이라면 터뜨린다.
 			{
-				pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				if (Maze[pBombArr[i].y + j][pBombArr[i].x] == '0')
+					Maze[pBombArr[i].y + j][pBombArr[i].x] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
+
+				// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
+				if (pPlayer->tPos.x == pBombArr[i].x && pPlayer->tPos.y == pBombArr[i].y + j)
+				{
+					pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				}
+			}
+			
+			if (pBombArr[i].x <= 17) // 오른쪽이 벽이라면 터뜨린다.
+			{
+				if (Maze[pBombArr[i].y][pBombArr[i].x + j] == '0')
+					Maze[pBombArr[i].y][pBombArr[i].x + j] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
+
+				// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
+				if (pPlayer->tPos.x == pBombArr[i].x +j && pPlayer->tPos.y == pBombArr[i].y)
+				{
+					pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				}
+			}
+
+			if (pBombArr[i].x >= 1) // 왼쪽이 벽이라면 터뜨린다.
+			{
+				if (Maze[pBombArr[i].y][pBombArr[i].x - j] == '0')
+					Maze[pBombArr[i].y][pBombArr[i].x - j] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
+
+				// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
+				if (pPlayer->tPos.x == pBombArr[i].x - j && pPlayer->tPos.y == pBombArr[i].y)
+				{
+					pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
+				}
 			}
 		}
 
-		if (pBombArr[i].y <= 18) // 아래쪽이 벽이라면 터뜨린다.
-		{
-			if (Maze[pBombArr[i].y + 1][pBombArr[i].x] == '0')
-				Maze[pBombArr[i].y + 1][pBombArr[i].x] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
-
-			// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
-			if (pPlayer->tPos.x == pBombArr[i].x && pPlayer->tPos.y == pBombArr[i].y + 1)
-			{
-				pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
-			}
-		}
-		
-		if (pBombArr[i].y >= 1) // 위쪽이 벽이라면 터뜨린다.
-		{
-			if (Maze[pBombArr[i].y - 1][pBombArr[i].x] == '0')
-				Maze[pBombArr[i].y - 1][pBombArr[i].x] = DropItem(rand() % 100 < 20); // 20퍼의 확률로 아이템 드랍
-			// 플레이어가 폭탄에 맞았을 때 시작점으로 보내자
-			if (pPlayer->tPos.x == pBombArr[i].x && pPlayer->tPos.y == pBombArr[i].y - 1)
-			{
-				pPlayer->tPos.x = 0; pPlayer->tPos.y = 0;
-			}
-		}
-
+		// 원래 폭탄이 있던 좌표를 길로 만든다.
 		Maze[pBombArr[i].y][pBombArr[i].x] = '1';
 	}
+	*pBombCount = 0;
 
 	cout << "폭탄이 터졌습니다" << endl;
 	system("pause");
-	*pBombCount = 0;
 }
 
 void main()
 {
+	srand((unsigned int)time(0)); // 아이템 드랍 확률을 위해 난수표 작성
+
 	// 20 x 20 미로
 	char	strMaze[20][20];
 	
@@ -428,7 +405,6 @@ void main()
 
 	while (true)
 	{
-		srand((unsigned int)time(0)); // 아이템 드랍 확률을 위해 난수표 작성
 
 		system("cls");
 		
