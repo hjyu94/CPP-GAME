@@ -1,5 +1,3 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (CPP-GAME.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  38 미로 게임.cpp
-c:\users\hyojeong\source\repos\hjyu94\cpp-game\cpp-game\38 미로 게임.cpp(92): warning C4566: character represented by universal-character-name '\u327E' cannot be represented in the current code page (949)
   CPP-GAME.vcxproj -> C:\Users\HyoJeong\source\repos\hjyu94\CPP-GAME\CPP-GAME\Debug\Exercise.exe
   CPP-GAME.vcxproj -> C:\Users\HyoJeong\source\repos\hjyu94\CPP-GAME\CPP-GAME\Debug\Exercise.pdb (Full PDB)

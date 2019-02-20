@@ -18,6 +18,7 @@ typedef struct _tagPlayer
 {
 	_tagPoint	tPos;
 	bool		bWallPush;
+	bool		bPushOnOff;
 	bool		bTransparency;
 	int			iBombPower;
 } PLAYER, *PPLAYER;
@@ -89,14 +90,21 @@ void Output(char Maze[20][20], PPLAYER pPlayer)
 			else if (Maze[i][j] == '4') cout << "♨"; // 폭탄
 			else if (Maze[i][j] == '5') cout << "㈜"; // 파워 아이템
 			else if (Maze[i][j] == '6') cout << "※"; // 벽 밀기
-			else if (Maze[i][j] == '7') cout << "㉾"; // 투명
+			else if (Maze[i][j] == '7') cout << "○"; // 투명
 		}
 		cout << endl;
 	}
 
 	cout << "폭탄 파워: " << pPlayer->iBombPower << endl; // MAX: 5
 	cout << "벽 통과: " << (pPlayer->bTransparency ? "ON" : "OFF") << ", ";
-	cout << "벽 밀기: " << (pPlayer->bWallPush ? "ON" : "OFF") << endl;
+	
+	cout << "벽 밀기: ";
+	if (pPlayer->bWallPush)
+	{
+		cout << "가능 / ";
+		cout << (pPlayer->bPushOnOff ? "ON" : "OFF") << endl;
+	}
+	else cout << "불가능" << endl;
 }
 
 // 5 : 파워 아이템
@@ -114,6 +122,7 @@ bool AddItem(char cItemType, PPLAYER pPlayer)
 
 	case('6'):
 		pPlayer->bWallPush = true;
+		pPlayer->bPushOnOff = true;
 		return true;
 
 	case('7'):
@@ -129,20 +138,48 @@ void MoveUp(char Maze[20][20], PPLAYER pPlayer)
 {
 	if (pPlayer->tPos.y - 1 >= 0)
 	{
-		if (Maze[pPlayer->tPos.y - 1][pPlayer->tPos.x] == '4')
+		if (Maze[pPlayer->tPos.y - 1][pPlayer->tPos.x] == '4') // 가려는 곳에 폭탄이 있는 경우
 		{
 			cout << "폭탄을 통과할 수 없습니다." << endl;
 			system("pause");
 		}
-		else if ((!pPlayer->bTransparency) && Maze[pPlayer->tPos.y - 1][pPlayer->tPos.x] == '0') // 벽인데다가 투명하지도 않다면
+		else if (Maze[pPlayer->tPos.y - 1][pPlayer->tPos.x] == '0') // 가려는 곳이 벽인 경우
 		{
-			cout << "벽을 뚫을 수 없습니다" << endl;
-			system("pause");
+			// 가려는 곳이 벽인데 벽 밀기가 가능한 경우 또, 위의 위 칸이 벽이 아니라면 밀자.
+			if (pPlayer->bPushOnOff && pPlayer->tPos.y - 2 >= 0
+				&& Maze[pPlayer->tPos.y - 2][pPlayer->tPos.x] != '0')
+			{
+				// 위의 위칸은 벽으로 만들어 주고
+				Maze[pPlayer->tPos.y - 2][pPlayer->tPos.x] = '0';
+				// 바로 위칸은 길로 만들어 준 뒤
+				Maze[pPlayer->tPos.y - 1][pPlayer->tPos.x] = '1';
+				// 플레이어를 한칸 위로 옮겨준다.
+				--pPlayer->tPos.y;
+			}
+
+			// 가려는 곳이 벽인데 벽 밀기가 불가능 하지만 투명 아이템이 있는 경우
+			// 이동시킨다: 투명 아이템을 이용해 벽 통과를 하려는 상황
+			else if(pPlayer->bTransparency) 
+			{ 
+				--pPlayer->tPos.y;
+
+				// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
+				if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
+					Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
+			}
+
+			// 가려는 곳이 벽이고 투명, 밀기 아이템 모두 없는 경우
+			else
+			{
+				cout << "벽을 뚫을 수 없습니다" << endl;
+				system("pause");
+			}
 		}
-		else
+		else // 이동시킨다: 폭탄도 아니고 벽도 아닌 경우
 		{
 			--pPlayer->tPos.y;
 			
+			// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
 			if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
 				Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
 		}
@@ -163,15 +200,44 @@ void MoveDown(char Maze[20][20], PPLAYER pPlayer)
 			cout << "폭탄을 통과할 수 없습니다." << endl;
 			system("pause");
 		}
-		else if ((!pPlayer->bTransparency) && Maze[pPlayer->tPos.y + 1][pPlayer->tPos.x] == '0') // 벽인데다가 투명하지도 않다면
+	
+		else if (Maze[pPlayer->tPos.y + 1][pPlayer->tPos.x] == '0') // 가려는 곳이 벽인 경우
 		{
-			cout << "벽을 뚫을 수 없습니다" << endl;
-			system("pause");
+			// 가려는 곳이 벽인데 벽 밀기가 가능한 경우 또, 아래의 아래 칸이 벽이 아니라면 밀자.
+			if (pPlayer->bPushOnOff && pPlayer->tPos.y + 2 <= 19
+				&& Maze[pPlayer->tPos.y + 2][pPlayer->tPos.x] != '0')
+			{
+				// 아래의 아래칸은 벽으로 만들어 주고
+				Maze[pPlayer->tPos.y + 2][pPlayer->tPos.x] = '0';
+				// 바로 아래칸은 길로 만들어 준 뒤
+				Maze[pPlayer->tPos.y + 1][pPlayer->tPos.x] = '1';
+				// 플레이어를 한칸 아래로 옮겨준다.
+				++pPlayer->tPos.y;
+			}
+
+			// 가려는 곳이 벽인데 벽 밀기가 불가능 하지만 투명 아이템이 있는 경우
+			// 이동시킨다: 투명 아이템을 이용해 벽 통과를 하려는 상황
+			else if (pPlayer->bTransparency)
+			{
+				++pPlayer->tPos.y;
+
+				// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
+				if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
+					Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
+			}
+
+			// 가려는 곳이 벽이고 투명, 밀기 아이템 모두 없는 경우
+			else
+			{
+				cout << "벽을 뚫을 수 없습니다" << endl;
+				system("pause");
+			}
 		}
-		else
+		else // 이동시킨다: 폭탄도 아니고 벽도 아닌 경우
 		{
 			++pPlayer->tPos.y;
 
+			// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
 			if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
 				Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
 		}
@@ -193,6 +259,46 @@ void MoveLeft(char Maze[20][20], PPLAYER pPlayer)
 			cout << "폭탄을 통과할 수 없습니다." << endl;
 			system("pause");
 		}
+
+		else if (Maze[pPlayer->tPos.y][pPlayer->tPos.x - 1] == '0') // 가려는 곳이 벽인 경우
+		{
+			// 가려는 곳이 벽인데 벽 밀기가 가능한 경우 또, 왼쪽의 왼쪽 칸이 벽이 아니라면 밀자.
+			if (pPlayer->bPushOnOff && pPlayer->tPos.y - 2 >= 0
+				&& Maze[pPlayer->tPos.y][pPlayer->tPos.x-2] != '0')
+			{
+				Maze[pPlayer->tPos.y][pPlayer->tPos.x-2] = '0';
+				Maze[pPlayer->tPos.y][pPlayer->tPos.x-1] = '1';
+				--pPlayer->tPos.x;
+			}
+
+			// 가려는 곳이 벽인데 벽 밀기가 불가능 하지만 투명 아이템이 있는 경우
+			// 이동시킨다: 투명 아이템을 이용해 벽 통과를 하려는 상황
+			else if (pPlayer->bTransparency)
+			{
+				--pPlayer->tPos.x;
+
+				// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
+				if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
+					Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
+			}
+
+			// 가려는 곳이 벽이고 투명, 밀기 아이템 모두 없는 경우
+			else
+			{
+				cout << "벽을 뚫을 수 없습니다" << endl;
+				system("pause");
+			}
+		}
+		else // 이동시킨다: 폭탄도 아니고 벽도 아닌 경우
+		{
+			--pPlayer->tPos.x;
+
+			// 아이템이 있다면 먹고 아이템이 놓인 위치를 길로 만들어준다.
+			if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
+				Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
+		}
+		
+		/*
 		else if ((!pPlayer->bTransparency) && Maze[pPlayer->tPos.y][pPlayer->tPos.x - 1] == '0')
 		{
 			cout << "벽을 뚫을 수 없습니다" << endl;
@@ -204,7 +310,7 @@ void MoveLeft(char Maze[20][20], PPLAYER pPlayer)
 
 			if (AddItem(Maze[pPlayer->tPos.y][pPlayer->tPos.x], pPlayer))
 				Maze[pPlayer->tPos.y][pPlayer->tPos.x] = '1';
-		}
+		}*/
 	}
 	else
 	{
@@ -310,9 +416,9 @@ char DropItem(bool bDrop)
 	{
 		int iRand = rand() % 100;
 
-		if (iRand < 70) return '5';
+		if (iRand < 70) return '7';
 		else if (iRand < 80) return '6';
-		else return '7';
+		else return '5';
 	}
 	else
 		return '1';
@@ -407,7 +513,6 @@ void main()
 	{
 
 		system("cls");
-		
 		Output(strMaze, &tPlayer);
 
 		if (tPlayer.tPos.x == tEndPos.x && tPlayer.tPos.y == tEndPos.y)
@@ -416,7 +521,7 @@ void main()
 			break;
 		}
 
-		cout << "t: 폭탄설치, u: 폭탄 터트리기, i: 벽 밀기" << endl;
+		cout << "t: 폭탄설치, u: 폭탄 터트리기, i: 벽밀기" << endl;
 		cout << "작동키: w s a d, 종료:q" << endl;
 		
 		char cInput = _getch();
@@ -431,6 +536,12 @@ void main()
 		else if (cInput == 'u' || cInput == 'U') // 폭탄 터트리기시
 		{
 			Fire(strMaze, &tPlayer, tBombPos, &iBombCount);
+		}
+		
+		else if (cInput == 'i' || cInput == 'I') // 벽밀기
+		{
+			if (tPlayer.bWallPush)
+				tPlayer.bPushOnOff = !tPlayer.bPushOnOff; // On <-> Off
 		}
 
 		else MovePlayer(strMaze, &tPlayer, cInput);
