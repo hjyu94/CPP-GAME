@@ -416,5 +416,6 @@ int main()
 	}
 
 	ClearList(&tList); // 동적할당한 메모리는 반드시 반납해줘야 한다.
+	cout << "메모리 반납 완료" << endl;
 	return 0;
 }
