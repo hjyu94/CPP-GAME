@@ -45,5 +45,11 @@
     <ClCompile Include="38 미로 게임.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="43 동적할당.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="44 링크드리스트.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
