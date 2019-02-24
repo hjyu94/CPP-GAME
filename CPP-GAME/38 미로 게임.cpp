@@ -32,7 +32,7 @@ typedef struct _tagPlayer
 // 6 : 벽 밀기 아이템
 // 7 : 투명
 
-void setMaze(char Maze[20][20], 
+void SetMaze(char Maze[20][20], 
 	PPLAYER pPlayer, PPOINT pStartPos, PPOINT pEndPos)
 {
 	/*
@@ -507,7 +507,7 @@ void main()
 	POINT tBombPos[5];
 
 	// 미로를 설정한다
-	setMaze(strMaze, &tPlayer, &tStartPos, &tEndPos);
+	SetMaze(strMaze, &tPlayer, &tStartPos, &tEndPos);
 
 	while (true)
 	{

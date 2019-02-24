@@ -66,6 +66,12 @@
     <ClCompile Include="51 파일입출력.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="52 미로게임 파일연동.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="53 바이너리 파일 입출력.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="47 List.h">
