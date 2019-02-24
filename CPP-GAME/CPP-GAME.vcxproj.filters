@@ -75,6 +75,9 @@
     <ClCompile Include="54 플레이어 저장 및 불러오기.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="56 클래스 기초.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="47 List.h">

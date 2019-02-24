@@ -191,7 +191,10 @@
     <ClCompile Include="53 바이너리 파일 입출력.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="54 플레이어 저장 및 불러오기.cpp" />
+    <ClCompile Include="54 플레이어 저장 및 불러오기.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="56 클래스 기초.cpp" />
     <ClCompile Include="구조체 - 도서 관리 프로그램.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
