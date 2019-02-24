@@ -54,5 +54,19 @@
     <ClCompile Include="47 더블링크드리스트.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="47 더블링크드리스트 sol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="47 List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="49 링크르리스트 정렬.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="47 List.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
