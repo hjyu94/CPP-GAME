@@ -63,6 +63,9 @@
     <ClCompile Include="49 링크르리스트 정렬.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="51 파일입출력.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="47 List.h">

@@ -25,7 +25,8 @@ void main()
 	*/
 
 	// int 크기만큼 공간을 힙에 할당한다.
-	// 그 뒤 할당한 공간의 메모리 주소를 pNumber에 넣어준다.
+	// 그 뒤 할당한 공간의 메모리 주소를 반환하여
+	// pNumber에 넣어준다.
 	// (pNumber는 stack에 있는 로컬변수)
 	
 	int*	pNumber = new int;
