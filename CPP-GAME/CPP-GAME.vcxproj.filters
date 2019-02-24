@@ -72,6 +72,9 @@
     <ClCompile Include="53 바이너리 파일 입출력.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="54 플레이어 저장 및 불러오기.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="47 List.h">
